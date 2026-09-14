@@ -12,8 +12,12 @@ playlist = "Best drake songs ever"
 play_on = ["iPhone"]
 """
 
+# Open, write, and explicitly close the file before proceeding
 with open("spotiafk.toml", "w") as f:
     f.write(config_content)
+    f.flush()
 
 print("spotiafk.toml generated successfully!")
+
+# Now launch SpotiAFK
 subprocess.run(["poetry", "run", "python", "-m", "spotiafk", "run"])
