@@ -7,14 +7,15 @@ client_id = os.getenv("CLIENT_ID", "").strip()
 client_secret = os.getenv("CLIENT_SECRET", "").strip()
 raw_cache = os.getenv("SPOTIFY_CACHE", "").strip()
 
-# Diretório de dados do SpotiAFK no Render
+# Diretório onde o SpotiAFK guarda o estado/token
 data_home = Path("/opt/render/project/src/.local/share")
 state_dir = data_home / "spotiafk"
 
+# Faz o config.py usar este diretório
 os.environ["XDG_DATA_HOME"] = str(data_home)
 
-# Configuração
-config_content = f"""playlist = "6rir2yuNUI8p7jjpTvi2wE"
+# Configuração do SpotiAFK
+config_content = f"""playlist = "Best drake songs ever (2)"
 play_on = ["iPhone"]
 
 [spotify]
@@ -27,12 +28,12 @@ state_dir = "{state_dir}"
 with open("spotiafk.toml", "w", encoding="utf-8") as f:
     f.write(config_content)
 
-# Restaurar cache do Spotify
+# Restaurar o token do Spotify a partir da variável SPOTIFY_CACHE
 if not raw_cache:
     print("--> ERRO: SPOTIFY_CACHE nao encontrada!", flush=True)
 else:
     try:
-        # Remove aspas exteriores, caso existam
+        # Remove aspas exteriores, se existirem
         if (
             (raw_cache.startswith('"') and raw_cache.endswith('"'))
             or
@@ -40,11 +41,14 @@ else:
         ):
             raw_cache = raw_cache[1:-1]
 
+        # Verifica se é JSON válido
         cache_data = json.loads(raw_cache)
         clean_cache = json.dumps(cache_data)
 
+        # Cria a pasta correta
         state_dir.mkdir(parents=True, exist_ok=True)
 
+        # O spotify.py procura exatamente este ficheiro
         token_path = state_dir / "token.dat"
 
         with open(token_path, "w", encoding="utf-8") as f:
@@ -55,7 +59,7 @@ else:
     except Exception as e:
         print(f"--> ERRO ao processar SPOTIFY_CACHE: {e}", flush=True)
 
-# Iniciar SpotiAFK
+# Iniciar o SpotiAFK
 subprocess.run(
     ["poetry", "run", "python", "-m", "spotiafk", "run"],
     check=False
