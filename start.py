@@ -17,12 +17,16 @@ redirect_uri = "http://127.0.0.1:8888/callback"
 with open("spotiafk.toml", "w") as f:
     f.write(config_content)
 
-# Cria o ficheiro oculto com o token
+# Escreve o cache nos dois nomes que o Spotipy costuma procurar
 if spotify_cache:
+    print("--> SPOTIFY_CACHE detetado! A criar ficheiros .cache...", flush=True)
     with open(".cache", "w") as f:
         f.write(spotify_cache)
+    if client_id:
+        with open(f".cache-{client_id}", "w") as f:
+            f.write(spotify_cache)
 
-print("Configuration and cache generated successfully!", flush=True)
+print("Setup concluido com sucesso!", flush=True)
 
 # Inicia o SpotiAFK
 subprocess.run(["poetry", "run", "python", "-m", "spotiafk", "run"])
