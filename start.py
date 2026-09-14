@@ -19,38 +19,37 @@ redirect_uri = "http://127.0.0.1:8888/callback"
 with open("spotiafk.toml", "w") as f:
     f.write(config_content)
 
-if raw_cache:
-    if (raw_cache.startswith('"') and raw_cache.endswith('"')) or (raw_cache.startswith("'") and raw_cache.endswith("'")):
-        raw_cache = raw_cache[1:-1]
-    
+if not raw_cache:
+    print("--> ERRO: SPOTIFY_CACHE nao encontrada!", flush=True)
+else:
     try:
+        # Remove aspas exteriores caso o Render tenha recebido o JSON assim
+        if (
+            (raw_cache.startswith('"') and raw_cache.endswith('"'))
+            or
+            (raw_cache.startswith("'") and raw_cache.endswith("'"))
+        ):
+            raw_cache = raw_cache[1:-1]
+
         cache_data = json.loads(raw_cache)
         clean_cache = json.dumps(cache_data)
-        
-        home = Path.home()
-        
-        # Mapeia todas as localizações possíveis onde o SpotiAFK procura o token
-        target_paths = [
-            Path(".cache"),
-            Path(f".cache-{client_id}"),
-            Path("spotiafk.cache"),
-            home / ".cache" / "spotiafk" / ".cache",
-            home / ".cache" / "spotiafk" / "cache",
-            home / ".config" / "spotiafk" / ".cache",
-            home / ".config" / "spotiafk" / "cache",
-            home / ".cache" / "spotiafk" / f".cache-{client_id}",
-            home / ".config" / "spotiafk" / f".cache-{client_id}",
-        ]
-        
-        for p in target_paths:
-            p.parent.mkdir(parents=True, exist_ok=True)
-            with open(p, "w") as f:
-                f.write(clean_cache)
-                
-        print("--> SPOTIFY_CACHE gravada em todas as pastas de sistema!", flush=True)
-    except Exception as e:
-        print(f"--> ERRO no JSON: {e}", flush=True)
-else:
-    print("--> ERRO: SPOTIFY_CACHE nao encontrada!", flush=True)
 
-subprocess.run(["poetry", "run", "python", "-m", "spotiafk", "run"])
+        # O spotify.py do SpotiAFK usa exatamente este ficheiro:
+        # ~/.local/share/spotiafk/token.dat
+        token_dir = Path.home() / ".local" / "share" / "spotiafk"
+        token_dir.mkdir(parents=True, exist_ok=True)
+
+        token_path = token_dir / "token.dat"
+
+        with open(token_path, "w") as f:
+            f.write(clean_cache)
+
+        print(f"--> Spotify token gravado em: {token_path}", flush=True)
+
+    except Exception as e:
+        print(f"--> ERRO ao processar SPOTIFY_CACHE: {e}", flush=True)
+
+subprocess.run(
+    ["poetry", "run", "python", "-m", "spotiafk", "run"],
+    check=False
+)
