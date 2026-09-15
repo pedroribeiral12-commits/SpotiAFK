@@ -10,13 +10,13 @@ client_secret = "YOUR-CLIENT-SECRET"
 # redirect_uri = "http://127.0.0.1:8888/callback/"
 
 # [playback]
-# skip_after = 35               # seconds per track (min 31); 0 plays tracks in full
+# skip_after = 55               # seconds per track (min 31); 0 plays tracks in full
 # shuffle = true
 
 # [checks]
 # idle_checks = 5               # consecutive free checks before playing
 # interval = 30                 # seconds between checks
-# retry = 10                    # seconds before retrying after an error
+# retry = 12                    # seconds before retrying after an error
 
 # [telegram]                    # optional; omit the section for no notifications
 # bot_token = "..."
