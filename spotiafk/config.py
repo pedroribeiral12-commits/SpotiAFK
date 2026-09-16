@@ -48,11 +48,11 @@ class Config:
     client_id: str = ""
     client_secret: str = ""
     redirect_uri: str = DEFAULT_REDIRECT_URI
-    skip_after: float | None = 35.0  # seconds per track; None plays tracks in full
+    skip_after: float | None = None  # None plays tracks in full (avoids API rate bans)
     shuffle: bool = True
     idle_checks: int = 5
-    check_interval: float = 30.0
-    retry_time: float = 10.0
+    check_interval: float = 60.0     # Halves background API status checks
+    retry_time: float = 30.0         # Wait longer before retrying after errors
     telegram: Telegram | None = None
     state_dir: str = dataclasses.field(default_factory=default_state_dir)
     source: str = "<defaults>"
