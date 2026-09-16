@@ -97,7 +97,7 @@ class Config:
                 chat_id=str(data["telegram"].get("chat_id", "")),
                 notify_on_error=data["telegram"].get("notify_on_error", True),
             )
-        skip_after = playback.get("skip_after", 35)
+        skip_after = playback.get("skip_after", 55)
         return cls(
             playlist=data.get("playlist", ""),
             play_on=tuple(data.get("play_on", [])),
@@ -108,7 +108,7 @@ class Config:
             shuffle=playback.get("shuffle", True),
             idle_checks=int(checks.get("idle_checks", 5)),
             check_interval=float(checks.get("interval", 30)),
-            retry_time=float(checks.get("retry", 10)),
+            retry_time=float(checks.get("retry", 12)),
             telegram=telegram,
             state_dir=os.path.expanduser(data.get("state_dir", default_state_dir())),
             source=path,
